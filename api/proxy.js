@@ -1,7 +1,15 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', 'https://tanaras.de');
+  const origin = req.headers.origin || '';
+  const allowed =
+    origin === 'https://tanaras.de' ||
+    origin === 'https://www.tanaras.de' ||
+    origin.endsWith('.myshopify.com') ||
+    origin.endsWith('.vercel.app');
+
+  res.setHeader('Access-Control-Allow-Origin', allowed ? origin : 'https://tanaras.de');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Vary', 'Origin');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
